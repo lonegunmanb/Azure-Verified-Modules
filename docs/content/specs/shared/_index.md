@@ -27,6 +27,7 @@ Listed below are both functional and non-functional requirements for both classi
 #### ID: SFR1 - Category: Composition
 
 Modules **MAY** create/adopt public preview services and features at their discretion.
+(Since the service team could withdraw a preview feature any time, should we reconsider this principal?)
 
 ### Non-Functional Requirements
 
@@ -41,6 +42,7 @@ Modules **MUST** implement end-to-end (deployment) testing.
 #### ID: SNFR3 - Category: Testing
 
 Modules **MUST** implement implement AVM unit tests that ensure compliance to AVM specifications.
+(What is AVM specifications' compliance? Should we enforce this principal by using some sort of policy as code tool?)
 
 #### ID: SNFR4 - Category: Testing
 
@@ -49,6 +51,7 @@ Modules **SHOULD** implement unit testing to ensure logic and conditions within 
 #### ID: SNFR5 - Category: Testing
 
 Modules **SHOULD** implement upgrade testing to ensure new features are implemented in a non-breaking fashion on mom-major releases.
+(At least a minor version upgrade MUST NOT break the existing examples. But a major version upgrade could do anything they want, and we can introduce breaking changes in v0.x since v0 means beta.)
 
 #### ID: SNFR6 - Category: Testing
 
@@ -57,6 +60,7 @@ Modules **MUST** use static analysis, e.g., linting, security scanning.
 #### ID: SNFR7 - Category: Testing
 
 Modules **MUST** implement idempotency end-to-end (deployment) testing. E.g. deploying the module twice over the top of itself.
+(Could we run this test for a Bicep module?)
 
 #### ID: SNFR8 - Category: Contribution/Support
 
@@ -79,6 +83,7 @@ A module **MUST** be published with the MIT License in the Azure GitHub organiza
 #### ID: SNFR11 - Category: Contribution/Support
 
 A module owner **MUST** respond to logged issues within 3 business days.
+(I would say a **MUST** might be difficult for a volunteer and it might encourge bot-style boilerplate response. Maybe we can establish some sort of automatically warning system for this, or a centralized Kanban so a PM team could intervene in time.)
 
 #### ID: SNFR12 - Category: Contribution/Support
 
@@ -154,6 +159,7 @@ In the case that a Resource Group is required, a module **MUST** have an input (
 
 - In Bicep the `targetScope` **MUST** be set to `resourceGroup` or not specified (which means default to `resourceGroup` scope)
 - In Terraform the `variable` **MUST** be called `resource_group`
+(Maybe `resource_group_name` would be better?)
 
 Scopes will be covered further in the respective language specific specifications.
 
@@ -165,14 +171,16 @@ Modules **MUST** support the following optional features/extension resources, if
 | ------------------------------------------- | --------------------- | ----------------------- |
 | Diagnostic Settings                         | `diagnosticSettings`  | `diagnostic_settings`   |
 | Role Assignments                            | `roleAssignments`     | `role_assignments`      |
-| Resource Locks                              | `locks`               | `locks`                 |
+| Resource Locks                              | `locks`               | `locks`                 |(Question as described previously)
 | Tags                                        | `tags`                | `tags`                  |
+(Different resources have different `tags`, should we use one `tags` for all, or separated tags variables?)
 | Azure Monitor Alerts                        | `alerts`              | `alerts`                |
 | Private Endpoints                           | `privateEndpoints`    | `private_endpoints`     |
 | Customer Managed Keys                       | `customerManagedKeys` | `customer_managed_keys` |
 | Managed Identities (System / User Assigned) | `managedIdentites`    | `managed_identites`     |
 
 Module owners **MAY** choose to utilize cross repo dependencies for these "add-on" resources, or **MAY** chose to implement the code directly in their own repo/module. So long as the implementation and outputs are as per the specifications requirements, then this is acceptable.
+(If we'd like to enforce this principal, we must develop our own linting tool, otherwise it could be very hard for both the contributor and the reviewer.)
 
 #### ID: RMFR5 - Category: Composition
 
@@ -211,6 +219,7 @@ Module names **MUST** follow the following pattern (all lower case):
 - Bicep: `avm-res-<rp>-<armresourcename>` (to support registry hosting)
 
 Example: `avm-res-compute-virtualmachine`
+(What if we're creating a very scenario-based module? e.g.: https://registry.terraform.io/modules/cloudposse/named-subnets/aws/latest vs https://github.com/cloudposse/terraform-aws-dynamic-subnets)
 
 - `<armresourcename>` is the singular version of the word after the resource provider, e.g., `Microsoft.Compute/virtualMachines` = `virtualmachine`
 - `<rp>` is the provider’s name after the `Microsoft` part, e.g., `Microsoft.Compute` = `compute`.
@@ -230,6 +239,7 @@ A module **SHOULD** use the following standard inputs:
 
 - `name` (no default)
 - `location` (use Resource Group location, if resource supports Resource Groups, otherwise no default)
+(Some ARM resources are subscription-wide and has no location, e.g.: microsoft defender related resources)
 
 ## Pattern Module Requirements
 
